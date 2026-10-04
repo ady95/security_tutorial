@@ -1,0 +1,55 @@
+# 02-2. 실습: 패킷 관찰하기
+# - target : HTTP(80)·HTTPS(443)로 가짜 로그인 요청을 받는 웹 서버
+# - client : 요청을 보내는 쪽
+# - sniffer: client와 같은 네트워크 인터페이스를 공유하며 모든 패킷을 /captures/lab.pcap 에 기록
+#            분석:  docker compose exec sniffer tshark -r /captures/lab.pcap
+#            꺼내기: docker compose cp sniffer:/captures/lab.pcap ./lab.pcap  (Wireshark로 열기)
+name: secbook-ch02-packet
+
+services:
+  certgen:                      # 실습용 자체 서명 인증서를 한 번 만들고 종료한다
+    image: nicolaka/netshoot:v0.16
+    network_mode: none
+    command:
+      - sh
+      - -c
+      - test -f /certs/lab.crt || openssl req -x509 -newkey rsa:2048 -nodes -days 30 -keyout /certs/lab.key -out /certs/lab.crt -subj /CN=target
+    volumes:
+      - certs:/certs
+
+  target:
+    image: nginx:1.28-alpine
+    depends_on:
+      certgen:
+        condition: service_completed_successfully
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - certs:/certs:ro
+    networks:
+      lab:
+        ipv4_address: 10.30.0.10
+
+  client:
+    image: nicolaka/netshoot:v0.16
+    command: ["sleep", "infinity"]
+    networks:
+      lab:
+        ipv4_address: 10.30.0.20
+
+  sniffer:
+    image: nicolaka/netshoot:v0.16
+    network_mode: "service:client"  # client의 네트워크 인터페이스를 그대로 엿본다
+    command: ["tcpdump", "-i", "any", "-U", "-w", "/captures/lab.pcap"]
+    volumes:
+      - captures:/captures
+
+volumes:
+  certs:
+  captures:
+
+networks:
+  lab:
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.30.0.0/24
