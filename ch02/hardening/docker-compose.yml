@@ -1,0 +1,50 @@
+# 02-9. 실습: 방어자가 되어보자 — 서버 Hardening 후 다시 테스트하기
+# - server  : 02-6 서버의 강화 버전 (ch02/linux/Dockerfile.hardened)
+# - weak    : 비교용 02-6 원래 서버 (ch02/linux/Dockerfile)
+# - target  : 02-8 웹 서버의 강화 버전 (속도 제한 + 버전 숨김)
+# - client  : 02-8 의 traffic.sh 로 같은 트래픽을 보낸다
+name: secbook-ch02-hardening
+
+services:
+  server:
+    build:
+      context: ../linux
+      dockerfile: Dockerfile.hardened
+    image: secbook/ch02-linux:hardened
+    hostname: lab-server
+    networks:
+      lab:
+        ipv4_address: 10.30.0.11
+
+  weak:
+    build: ../linux
+    image: secbook/ch02-linux:lab
+    hostname: lab-weak
+    networks:
+      lab:
+        ipv4_address: 10.30.0.12
+
+  target:
+    image: nginx:1.28-alpine
+    volumes:
+      - ./conf/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./conf:/lab:ro
+    networks:
+      lab:
+        ipv4_address: 10.30.0.10
+
+  client:
+    image: nicolaka/netshoot:v0.16
+    command: ["sleep", "infinity"]
+    volumes:
+      - ../logs/traffic.sh:/lab/traffic.sh:ro
+    networks:
+      lab:
+        ipv4_address: 10.30.0.20
+
+networks:
+  lab:
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.30.0.0/24

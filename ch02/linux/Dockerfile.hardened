@@ -1,0 +1,42 @@
+# 02-9 강화(Hardening) 버전 — 02-6 의 잘못된 설정 5가지를 이미지 빌드 단계에서 바로잡는다
+# 컨테이너 안에서 고친 것은 다시 만들면 사라지지만, 이미지에 반영한 것은 몇 번을 다시 만들어도 유지된다
+FROM ubuntu:24.04
+
+# [패치] 빌드할 때마다 최신 보안 업데이트를 적용한다
+RUN apt-get update \
+ && apt-get upgrade -y \
+ && apt-get install -y --no-install-recommends sudo openssh-server \
+ && rm -rf /var/lib/apt/lists/*
+
+# [계정] 애플리케이션 전용 계정 app 을 따로 만든다 (로그인 불가)
+RUN useradd -m -s /bin/bash alice \
+ && useradd -m -s /bin/bash ops \
+ && useradd -r -s /usr/sbin/nologin app
+
+# [바로잡음 1] 백업 스크립트는 소유자(root)만 고칠 수 있다
+RUN mkdir -p /opt/app/data \
+ && printf '#!/bin/sh\n# root 가 매일 실행하는 백업 스크립트 (실습용 가정)\ntar czf /tmp/app-backup.tgz /opt/app/data 2>/dev/null\n' > /opt/app/backup.sh \
+ && chmod 755 /opt/app/backup.sh
+
+# [바로잡음 2] 비밀 파일은 그것을 쓰는 app 계정만 읽을 수 있다
+RUN printf 'DB_USER=app\nDB_PASSWORD=lab-only-db-pass-2026-rotated\n' > /opt/app/.env \
+ && chown app:app /opt/app/.env \
+ && chmod 600 /opt/app/.env
+
+# [바로잡음 3] sudo 는 필요한 명령 하나만, 비밀번호 확인을 거쳐 허용한다
+RUN echo 'alice ALL=(root) /usr/bin/systemctl restart nginx' > /etc/sudoers.d/alice \
+ && echo 'ops ALL=(root) /usr/bin/systemctl restart nginx' > /etc/sudoers.d/ops \
+ && chmod 440 /etc/sudoers.d/alice /etc/sudoers.d/ops \
+ && visudo -c
+
+# [바로잡음 4] SSH 는 키 로그인만, root 로그인 금지
+RUN printf 'PermitRootLogin no\nPasswordAuthentication no\n' > /etc/ssh/sshd_config.d/50-lab.conf \
+ && mkdir -p /run/sshd \
+ && sshd -t
+
+# [바로잡음 5] 셸 기록은 처음부터 비어 있다 (비밀번호가 노출됐던 DB 계정은 비밀번호를 교체했다고 가정: -rotated)
+
+COPY audit.sh /usr/local/sbin/audit.sh
+RUN chmod 700 /usr/local/sbin/audit.sh
+
+CMD ["sleep", "infinity"]
