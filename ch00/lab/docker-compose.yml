@@ -1,0 +1,26 @@
+# 00-4. 실습 환경 점검용 최소 랩
+# - target  : 공격 대상 역할의 웹 서버 (nginx)
+# - attacker: 공격자 역할의 작업용 컨테이너 (alpine)
+# 두 컨테이너는 외부 인터넷과 차단된 랩 네트워크(10.30.0.0/24)에서만 통신합니다.
+name: secbook-ch00
+
+services:
+  target:
+    image: nginx:1.28-alpine
+    networks:
+      lab:
+        ipv4_address: 10.30.0.10
+
+  attacker:
+    image: alpine:3.22
+    command: ["sleep", "infinity"]
+    networks:
+      lab:
+        ipv4_address: 10.30.0.20
+
+networks:
+  lab:
+    internal: true          # 랩 밖(인터넷·내 PC의 다른 네트워크)으로 나가지 못하게 막는다
+    ipam:
+      config:
+        - subnet: 10.30.0.0/24
