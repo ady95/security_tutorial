@@ -1,0 +1,32 @@
+# 03-1. 웹은 어떻게 동작하는가 — 실습용 쇼핑몰 앱
+# - shop  : Flask 앱. 내 PC 브라우저에서 http://127.0.0.1:18080 으로 접속할 수 있다
+# - client: 랩 안에서 curl 로 요청을 보내는 쪽
+name: secbook-ch03-shop
+
+services:
+  shop:
+    build: .
+    image: secbook/ch03-shop:base
+    environment:
+      SHOP_SECRET_KEY: lab-only-flask-secret-2026
+    ports:
+      - "127.0.0.1:${SHOP_PORT:-18080}:5000"   # 내 PC 안에서만 접속 가능. 포트가 겹치면 SHOP_PORT 로 바꾼다
+    networks:
+      lab:
+        ipv4_address: 10.30.0.10
+      front: {}
+
+  client:
+    image: nicolaka/netshoot:v0.16
+    command: ["sleep", "infinity"]
+    networks:
+      lab:
+        ipv4_address: 10.30.0.20
+
+networks:
+  lab:
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.30.0.0/24
+  front: {}                        # 브라우저 접속용. internal 네트워크는 포트를 열 수 없어서 따로 둔다
