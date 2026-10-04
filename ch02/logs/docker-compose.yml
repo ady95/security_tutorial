@@ -1,0 +1,31 @@
+# 02-8. 실습: 공격 전후 로그 비교하기
+# - target: nginx 웹 서버. 시작할 때 conf/before.conf 를 적용한다
+# - client: traffic.sh 로 정상·의심 트래픽을 만든다
+# 로그 보기:  docker compose logs target --no-log-prefix
+name: secbook-ch02-logs
+
+services:
+  target:
+    image: nginx:1.28-alpine
+    command: ["sh", "-c", "cp /lab/before.conf /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"]
+    volumes:
+      - ./conf:/lab:ro
+    networks:
+      lab:
+        ipv4_address: 10.30.0.10
+
+  client:
+    image: nicolaka/netshoot:v0.16
+    command: ["sleep", "infinity"]
+    volumes:
+      - ./traffic.sh:/lab/traffic.sh:ro
+    networks:
+      lab:
+        ipv4_address: 10.30.0.20
+
+networks:
+  lab:
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.30.0.0/24
