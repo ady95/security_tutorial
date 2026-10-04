@@ -1,0 +1,20 @@
+# 02-6. 실습: 의도적으로 잘못 설정된 Linux 서버 찾아내기
+# server: 잘못된 설정 5가지가 들어간 Ubuntu 24.04 (학습용, 외부에 노출 금지)
+# 점검: docker compose exec server audit.sh
+name: secbook-ch02-linux
+
+services:
+  server:
+    build: .
+    image: secbook/ch02-linux:lab
+    hostname: lab-server
+    networks:
+      lab:
+        ipv4_address: 10.30.0.10
+
+networks:
+  lab:
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.30.0.0/24
