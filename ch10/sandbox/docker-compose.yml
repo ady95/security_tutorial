@@ -1,0 +1,40 @@
+# 10-3. Agent Sandbox 설정 예시 — Agent 가 도구를 실행하는 컨테이너를 운영체제 수준에서 제한한다
+# 확인: docker compose run --rm sandbox sh /check/check_sandbox.sh
+name: secbook-ch10-sandbox
+
+services:
+  prepare:                           # 결과 볼륨의 소유자를 Sandbox 계정으로 맞추고 종료한다
+    image: python:3.12-slim
+    network_mode: none
+    command: ["chown", "10001:10001", "/output"]
+    volumes:
+      - output:/output
+
+  sandbox:
+    image: python:3.12-slim
+    depends_on:
+      prepare:
+        condition: service_completed_successfully
+    user: "10001:10001"              # root 가 아닌 계정으로 실행
+    read_only: true                  # 컨테이너 루트 파일시스템은 읽기 전용
+    tmpfs:
+      - /tmp:size=64m                # 임시 파일은 메모리에, 크기 제한
+    volumes:
+      - ./workspace:/workspace:ro    # 작업 폴더: 읽기 전용
+      - output:/output               # 결과 폴더: 여기만 쓰기 가능 (꺼내기: docker compose cp)
+      - ./check_sandbox.sh:/check/check_sandbox.sh:ro
+    cap_drop: ["ALL"]                # 리눅스 특수 권한(capability) 모두 제거
+    security_opt:
+      - no-new-privileges:true       # 실행 중 권한 상승 금지
+    pids_limit: 64                   # 프로세스 수 상한
+    mem_limit: 512m                  # 메모리 상한
+    cpus: 1.0                        # CPU 상한
+    networks: [sandbox-net]          # 외부로 나갈 수 없는 네트워크
+    # 주의: /var/run/docker.sock 같은 호스트 자원은 절대 연결하지 않는다
+
+volumes:
+  output:
+
+networks:
+  sandbox-net:
+    internal: true
