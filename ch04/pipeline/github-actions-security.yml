@@ -1,0 +1,30 @@
+# 04-9 GitHub Actions 보안 파이프라인 예시
+# 내 저장소에서 쓰려면 이 파일을 .github/workflows/security.yml 로 복사하고 TARGET 경로를 바꾼다.
+# (이 예제 저장소에서는 실행되지 않도록 .github/workflows 밖에 두었다)
+name: security
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 0 * * 1"        # 매주 월요일: 코드가 그대로여도 새로 발표된 취약점을 잡는다
+
+permissions:
+  contents: read               # 최소 권한 — 이 작업은 코드를 읽기만 한다
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    env:
+      TARGET: ch04/pipeline/app-after
+    steps:
+      # 외부 Action 은 바뀔 수 있는 태그(v7) 대신 전체 커밋 SHA 로 고정한다 (04-8)
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false   # 이후 단계가 저장소 토큰을 쓰지 못하게 한다
+
+      - name: 보안 파이프라인 실행
+        run: |
+          cd ch04/pipeline
+          bash pipeline.sh "${TARGET#ch04/pipeline/}"
