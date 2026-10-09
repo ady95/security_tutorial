@@ -1,0 +1,22 @@
+# 04-7 Defend — 03-1 쇼핑몰 앱 이미지에 보안 업데이트를 반영한 버전
+# 빌드: docker build -f Dockerfile.patched -t secbook/ch03-shop:patched ../../ch03/shop
+FROM python:3.12-slim
+
+# [추가] OS 패키지 보안 업데이트 (02-9 와 같은 원리)
+RUN apt-get update \
+ && apt-get upgrade -y \
+ && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY requirements.txt .
+# [추가] 의존성을 설치한 뒤, 실행할 때는 필요 없는 pip·setuptools 를 이미지에서 뺀다
+#        pip 를 최신으로 올리기만 하면 pip 안에 들어 있는 라이브러리의 새 취약점이 보인다 (04-7 실측)
+RUN pip install --no-cache-dir -r requirements.txt \
+ && pip uninstall -y pip setuptools wheel
+
+COPY app.py .
+RUN useradd -r -s /usr/sbin/nologin shop && mkdir -p /data && chown shop /data
+USER shop
+ENV SHOP_DB=/data/shop.db
+EXPOSE 5000
+CMD ["python", "app.py"]

@@ -1,0 +1,16 @@
+# 04-7. 실습: 프로젝트 Dependency와 알려진 취약점 검사하기
+# trivy: 취약점 스캐너. 처음 실행할 때 취약점 DB 를 내려받으므로 인터넷이 필요하다 (공격 대상이 아닌 검사 도구)
+# 사용: docker compose run --rm trivy fs /work/old
+name: secbook-ch04-deps
+
+services:
+  trivy:
+    image: aquasec/trivy:0.75.0
+    volumes:
+      - ./:/work
+      - ../../ch03/shop:/shop:ro
+      - trivy-cache:/root/.cache/trivy
+    working_dir: /work
+
+volumes:
+  trivy-cache:
