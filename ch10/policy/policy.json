@@ -1,0 +1,14 @@
+{
+  "_설명": "10-5 정책 예시 — 목록에 없는 도구는 모두 금지(기본 거부). 위에서부터 처음 맞는 규칙을 적용한다",
+  "tools": {
+    "read_file":   [{"when": {"path_under": "workspace/"}, "decision": "allow"}],
+    "write_file":  [{"when": {"path_under": "output/"}, "decision": "allow"}],
+    "http_get":    [{"when": {"host_in": ["api.lab.example"]}, "decision": "allow"}],
+    "send_email":  [{"when": {"to_domain_in": ["lab.example"]}, "decision": "allow"},
+                    {"decision": "approve", "reason": "외부 주소로 보내는 메일"}],
+    "delete_file": [{"when": {"path_under": "output/"}, "decision": "approve", "reason": "삭제는 되돌리기 어렵다"}],
+    "payment":     [{"when": {"amount_max": 50000}, "decision": "approve", "reason": "결제는 사람 승인"},
+                    {"decision": "approve2", "reason": "5만 원 초과 결제는 2인 승인"}],
+    "run_shell":   [{"decision": "deny", "reason": "범용 명령 실행은 이 Agent에 허용하지 않는다"}]
+  }
+}

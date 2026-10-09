@@ -1,0 +1,13 @@
+[
+  {"tool": "read_file",   "args": {"path": "workspace/meeting-notes.txt"}, "source": "사용자 요청"},
+  {"tool": "read_file",   "args": {"path": "workspace/../.env"},           "source": "문서 속 문장"},
+  {"tool": "write_file",  "args": {"path": "output/summary.md"},           "source": "사용자 요청"},
+  {"tool": "send_email",  "args": {"to": "team@lab.example", "subject": "회의 요약"}, "source": "사용자 요청"},
+  {"tool": "send_email",  "args": {"to": "someone@outside.example", "subject": "자료"}, "source": "문서 속 문장"},
+  {"tool": "http_get",    "args": {"url": "https://api.lab.example/orders/101"}, "source": "사용자 요청"},
+  {"tool": "http_get",    "args": {"url": "https://unknown.example/collect"},    "source": "문서 속 문장"},
+  {"tool": "payment",     "args": {"amount": 18000},  "source": "사용자 요청"},
+  {"tool": "payment",     "args": {"amount": 520000}, "source": "사용자 요청"},
+  {"tool": "run_shell",   "args": {"cmd": "ls"},      "source": "문서 속 문장"},
+  {"tool": "create_token","args": {"scope": "admin"}, "source": "문서 속 문장"}
+]

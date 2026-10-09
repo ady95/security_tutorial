@@ -32,7 +32,7 @@ python ch00/check_env.py      # 실습 환경 점검
 | ch02 | 02. 네트워크와 시스템 해킹 따라하기 | packet: HTTP·HTTPS 패킷 관찰 / logs: 공격 전후 로그 비교, 속도 제한 / linux: 잘못 설정된 서버 점검 / hardening: 강화 이미지 재검증 |
 | ch03 | 03. 웹 해킹 따라하기 | shop: 실습용 쇼핑몰 앱 (기준 버전) |
 | ch04 | 04. Cloud·Container·Supply Chain 보안 따라하기 | secrets: Git 이력의 Secret 탐지, 커밋 전 검사 / deps: 의존성·이미지 취약점 검사, SBOM / pipeline: 보안 파이프라인(gitleaks·Semgrep·Trivy), GitHub Actions 예시 |
-| ch10 | 10. 안전한 AI Agent 만들기 | sandbox: Agent 도구 실행용 Sandbox 컨테이너 설정과 제한 확인 |
+| ch10 | 10. 안전한 AI Agent 만들기 | sandbox: Agent 도구 실행용 Sandbox 컨테이너 설정과 제한 확인 / policy: 도구 호출 정책 엔진 |
 
 장을 집필하는 대로 폴더가 추가됩니다.
 
