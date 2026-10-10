@@ -221,3 +221,6 @@ __marimo__/
 
 # 실습 환경 설정 (API 키 포함 가능)
 .env
+
+# 06 실습에서 만드는 모델 파일
+ch06/adversarial/*.npz
