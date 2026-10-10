@@ -224,3 +224,7 @@ __marimo__/
 
 # 06 실습에서 만드는 모델 파일
 ch06/adversarial/*.npz
+
+# 08 실습에서 만드는 임베딩 색인
+ch08/**/index*.json
+ch12/project/index.json
