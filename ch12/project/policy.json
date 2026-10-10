@@ -1,0 +1,14 @@
+{
+  "_설명": "12장 프로젝트 Agent 정책 — 목록에 없는 도구는 모두 금지. 도구마다 위에서부터 처음 맞는 규칙을 적용한다. tainted 는 Agent 가 파일·문서를 읽은 뒤인지를 뜻한다",
+  "tools": {
+    "read_file":       [{"when": {"path_under": "workspace/"}, "decision": "allow"}],
+    "search_document": [{"decision": "allow"}],
+    "get_order":       [{"decision": "allow"}],
+    "write_file":      [{"when": {"path_under": "output/"}, "decision": "allow"}],
+    "delete_file":     [{"when": {"path_under": "output/"}, "decision": "approve", "reason": "삭제는 되돌리기 어렵다"}],
+    "send_email":      [{"when": {"to_domain_in": ["lab.example"], "tainted": false}, "decision": "allow"},
+                        {"when": {"to_domain_in": ["lab.example"], "tainted": true}, "decision": "approve",
+                         "reason": "문서·파일을 읽은 뒤의 메일 발송"},
+                        {"decision": "approve", "reason": "외부 주소로 보내는 메일"}]
+  }
+}

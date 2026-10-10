@@ -1,0 +1,69 @@
+# 12장 최종 프로젝트 — Sandbox 안에서 실행되는 Agent
+# - ollama : 로컬 LLM. 모델을 내려받기 위해서만 외부 연결(egress)을 가진다
+# - agent  : 10-3 의 Sandbox 설정을 적용한 Agent. llm-net 으로 ollama 에만 닿는다 (인터넷 없음)
+# - prepare: 쓰기용 볼륨 세 개의 소유자를 Agent 계정(10001)으로 맞추고 종료한다
+# 사용 예:
+#   docker compose up -d ollama
+#   docker compose exec ollama ollama pull qwen3.5:4b
+#   docker compose exec ollama ollama pull qwen3-embedding:0.6b
+#   docker compose run --rm agent python build_index.py
+#   docker compose run --rm agent python agent.py "목표 문장"
+#   docker compose run --rm agent python approve.py
+name: secbook-ch12
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    cpus: 4                          # 보통 노트북 수준으로 제한 (GPU 없이 실행)
+    mem_limit: 8g
+    volumes:
+      - ollama-models:/root/.ollama
+    networks: [llm-net, egress]
+
+  prepare:
+    image: python:3.12-slim
+    network_mode: none
+    command: ["chown", "10001:10001", "/output", "/audit", "/data"]
+    volumes:
+      - output:/output
+      - audit:/audit
+      - data:/data
+
+  agent:
+    build: .
+    image: secbook/ch12-agent:project
+    depends_on:
+      prepare:
+        condition: service_completed_successfully
+    environment:
+      OPENAI_BASE_URL: http://ollama:11434/v1
+      OPENAI_API_KEY: ollama
+      OPENAI_MODEL: qwen3.5:4b
+      LLM_REASONING_EFFORT: none
+      EMBED_MODEL: qwen3-embedding:0.6b
+      GUARD_POLICY: ${GUARD_POLICY:-on}
+      GUARD_APPROVAL: ${GUARD_APPROVAL:-on}
+    read_only: true
+    tmpfs: ["/tmp:size=64m"]
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    pids_limit: 64
+    mem_limit: 512m
+    cpus: 1.0
+    volumes:
+      - output:/output
+      - audit:/audit
+      - data:/data
+    networks: [llm-net]
+
+volumes:
+  ollama-models:
+    name: ${OLLAMA_VOLUME:-secbook-ch12-ollama}
+  output:
+  audit:
+  data:
+
+networks:
+  llm-net:
+    internal: true
+  egress: {}

@@ -35,6 +35,7 @@ python ch00/check_env.py      # 실습 환경 점검
 | ch08 | 08. RAG 해킹 따라하기 | rag: 작은 RAG 만들기 (임베딩 색인, 검색, 답변 생성) |
 | ch09 | 09. AI Agent 해킹 따라하기 | agent: 도구 4개를 가진 Tool Calling 로컬 Agent, 단계별 기록 |
 | ch10 | 10. 안전한 AI Agent 만들기 | sandbox: Agent 도구 실행용 Sandbox 컨테이너 설정과 제한 확인 / policy: 도구 호출 정책 엔진 |
+| ch12 | 12. 최종 프로젝트 — Secure AI Agent 만들기 | project: 도구 6개 Agent + 가드(정책·승인·감사) + Sandbox Compose + 정책 테스트 |
 
 장을 집필하는 대로 폴더가 추가됩니다.
 
