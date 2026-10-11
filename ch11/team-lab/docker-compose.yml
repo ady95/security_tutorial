@@ -1,0 +1,16 @@
+name: secbook-ch11
+services:
+  lab:
+    build: .
+    read_only: true
+    environment:
+      PYTHONDONTWRITEBYTECODE: "1"
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    networks: [lab]
+networks:
+  lab:
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.30.0.0/24

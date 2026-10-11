@@ -1,0 +1,154 @@
+{
+  "scope": "로컬 실습용 쇼핑몰 Agent; 실제 메일·주문·비밀값 없음",
+  "nodes": [
+    {
+      "id": "U",
+      "name": "사용자"
+    },
+    {
+      "id": "S",
+      "name": "문서·메모 제공자"
+    },
+    {
+      "id": "A",
+      "name": "Agent"
+    },
+    {
+      "id": "L",
+      "name": "LLM"
+    },
+    {
+      "id": "G",
+      "name": "가드"
+    },
+    {
+      "id": "T",
+      "name": "도구"
+    },
+    {
+      "id": "O",
+      "name": "결과·감사 저장소"
+    }
+  ],
+  "boundaries": [
+    {
+      "id": "B1",
+      "meaning": "비신뢰 입력"
+    },
+    {
+      "id": "B2",
+      "meaning": "모델 제공자"
+    },
+    {
+      "id": "B3",
+      "meaning": "행동 실행"
+    },
+    {
+      "id": "B4",
+      "meaning": "저장·열람 권한"
+    }
+  ],
+  "flows": [
+    {
+      "id": "F1",
+      "from": "U",
+      "to": "A",
+      "boundary": "B1",
+      "data": "사용자 목표"
+    },
+    {
+      "id": "F2",
+      "from": "S",
+      "to": "A",
+      "boundary": "B1",
+      "data": "검색 조각·파일 본문"
+    },
+    {
+      "id": "F3",
+      "from": "A",
+      "to": "L",
+      "boundary": "B2",
+      "data": "메시지·도구 정의"
+    },
+    {
+      "id": "F4",
+      "from": "A",
+      "to": "G",
+      "boundary": "B3",
+      "data": "도구 이름·인자"
+    },
+    {
+      "id": "F5",
+      "from": "G",
+      "to": "T",
+      "boundary": "B3",
+      "data": "허용된 호출"
+    },
+    {
+      "id": "F6",
+      "from": "T",
+      "to": "O",
+      "boundary": "B4",
+      "data": "outbox·결과"
+    },
+    {
+      "id": "F7",
+      "from": "G",
+      "to": "O",
+      "boundary": "B4",
+      "data": "감사·승인 내용"
+    }
+  ],
+  "threats": [
+    {
+      "id": "TM1",
+      "flow": "F2",
+      "asset": "원래 사용자 목표",
+      "assumption": "읽은 문장이 지시로 승격되지 않는다",
+      "impact": "요청하지 않은 외부 보관 메일",
+      "control": "실행 전 가드와 승인",
+      "owner": "Agent 개발자",
+      "test": "P1"
+    },
+    {
+      "id": "TM2",
+      "flow": "F2",
+      "asset": "환불 정책의 정확성",
+      "assumption": "색인 문서가 승인된 원본이다",
+      "impact": "999일이라는 거짓 정책 안내",
+      "control": "보호된 원본 manifest·수집 승인",
+      "owner": "문서 관리자",
+      "test": "P2"
+    },
+    {
+      "id": "TM3",
+      "flow": "F5",
+      "asset": "저장된 보고서",
+      "assumption": "삭제에 운영자 승인이 필요하다",
+      "impact": "승인 없는 삭제",
+      "control": "delete_file 승인 대기",
+      "owner": "도구 개발자",
+      "test": "T1"
+    },
+    {
+      "id": "TM4",
+      "flow": "F6",
+      "asset": "가짜 인증 표식",
+      "assumption": "모델이 읽어도 밖으로 보내지 못한다",
+      "impact": "outbox·답변·감사·승인 저장소에 노출",
+      "control": "비밀값의 컨텍스트 분리·로그 최소화·메일 승인",
+      "owner": "플랫폼 담당자",
+      "test": "C1"
+    },
+    {
+      "id": "TM5",
+      "flow": "F7",
+      "asset": "행동 추적 가능성",
+      "assumption": "시도·승인 대기·실행을 구분해 기록한다",
+      "impact": "대기 중 호출을 실행으로 오판",
+      "control": "trace와 판단·효과 대조",
+      "owner": "탐지 담당자",
+      "test": "N1 및 탐지 정상 표본"
+    }
+  ]
+}
