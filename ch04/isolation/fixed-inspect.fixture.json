@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "lab-only-synthetic-fixed",
+    "Config": {"User": "10001:10001"},
+    "HostConfig": {
+      "Privileged": false,
+      "ReadonlyRootfs": true,
+      "CapDrop": ["ALL"],
+      "SecurityOpt": ["no-new-privileges:true"]
+    },
+    "Mounts": [
+      {"Type": "bind", "Source": "/lab-only-share", "Destination": "/shared", "RW": false}
+    ]
+  }
+]

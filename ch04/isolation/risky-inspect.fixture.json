@@ -1,0 +1,16 @@
+[
+  {
+    "Name": "lab-only-synthetic-risk",
+    "Config": {"User": "0:0"},
+    "HostConfig": {
+      "Privileged": true,
+      "ReadonlyRootfs": false,
+      "CapDrop": [],
+      "SecurityOpt": []
+    },
+    "Mounts": [
+      {"Type": "bind", "Source": "/var/run/docker.sock", "Destination": "/var/run/docker.sock", "RW": true},
+      {"Type": "bind", "Source": "/", "Destination": "/host", "RW": true}
+    ]
+  }
+]

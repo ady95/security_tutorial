@@ -1,0 +1,30 @@
+name: secbook-ch04
+services:
+  weak:
+    image: alpine:3.24
+    command: ["sleep", "infinity"]
+    user: "0:0"
+    volumes:
+      - ./lab-share:/shared
+    networks:
+      lab:
+        ipv4_address: 10.30.0.10
+  fixed:
+    image: alpine:3.24
+    command: ["sleep", "infinity"]
+    user: "10001:10001"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    tmpfs: ["/tmp:rw,noexec,nosuid,size=16m"]
+    volumes:
+      - ./lab-share:/shared:ro
+    networks:
+      lab:
+        ipv4_address: 10.30.0.11
+networks:
+  lab:
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.30.0.0/24
