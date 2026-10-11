@@ -9,6 +9,7 @@
 #   docker compose run --rm agent python build_index.py
 #   docker compose run --rm agent python agent.py "목표 문장"
 #   docker compose run --rm agent python approve.py
+#   docker compose run --rm agent python sandbox_check.py
 name: secbook-ch12
 
 services:
