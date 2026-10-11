@@ -13,7 +13,7 @@ name: secbook-ch12
 
 services:
   ollama:
-    image: ollama/ollama:latest
+    image: ollama/ollama:0.35.0
     cpus: 4                          # 보통 노트북 수준으로 제한 (GPU 없이 실행)
     mem_limit: 8g
     volumes:
@@ -37,7 +37,7 @@ services:
         condition: service_completed_successfully
     environment:
       OPENAI_BASE_URL: http://ollama:11434/v1
-      OPENAI_API_KEY: ollama
+      OPENAI_API_KEY: lab-only-ollama
       OPENAI_MODEL: qwen3.5:4b
       LLM_REASONING_EFFORT: none
       EMBED_MODEL: qwen3-embedding:0.6b
@@ -66,4 +66,7 @@ volumes:
 networks:
   llm-net:
     internal: true
+    ipam:
+      config:
+        - subnet: 10.30.0.0/24
   egress: {}

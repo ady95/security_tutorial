@@ -1,0 +1,9 @@
+.env
+__pycache__
+*.pyc
+*.private.*
+output
+audit.jsonl
+approvals
+index.json
+redteam-runs

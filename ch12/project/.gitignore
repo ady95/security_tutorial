@@ -2,3 +2,6 @@ output/
 audit.jsonl
 approvals/
 index.json
+
+redteam-runs/
+*.private.*
