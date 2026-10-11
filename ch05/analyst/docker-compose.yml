@@ -1,0 +1,18 @@
+name: secbook-ch05
+services:
+  scanner:
+    image: semgrep/semgrep:1.180.0
+    entrypoint: [semgrep]
+    working_dir: /src
+    volumes:
+      - ./samples:/src/samples:ro
+      - ./rules.yml:/src/rules.yml:ro
+    networks:
+      lab:
+        ipv4_address: 10.30.0.10
+networks:
+  lab:
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.30.0.0/24

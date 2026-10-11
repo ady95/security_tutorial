@@ -1,0 +1,17 @@
+rules:
+  - id: lab-sql-fstring
+    languages: [python]
+    message: lab-only direct f-string SQL candidate; check input origin
+    severity: ERROR
+    metadata:
+      cwe: [CWE-89]
+    pattern: $DB.execute(f"...")
+  - id: lab-html-fstring
+    languages: [python]
+    message: lab-only direct HTML f-string candidate; check output context
+    severity: WARNING
+    metadata:
+      cwe: [CWE-79]
+    pattern: |
+      def render_message($VALUE):
+          return f"..."

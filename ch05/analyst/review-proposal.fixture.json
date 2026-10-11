@@ -1,0 +1,1 @@
+{"findings":[{"file":"weak.py","line":2,"cwe":"CWE-89","reason":"이름 입력이 SQL 문법에 직접 결합됩니다.","next_check":"메모리 DB에서 정상 입력과 따옴표 입력을 비교합니다."},{"file":"weak.py","line":6,"cwe":"CWE-79","reason":"입력이 HTML 문자열에 바로 들어갑니다.","next_check":"출력 위치와 HTML 인코딩을 확인합니다."}]}

@@ -1,0 +1,8 @@
+[
+  {"case_id":"C001","asset":"lab-only-shop","asset_criticality":"high","change_approved":false,
+   "events":[{"id":"E001","kind":"login_failure","ip":"10.30.0.30"},{"id":"E002","kind":"login_failure","ip":"10.30.0.30"},{"id":"E003","kind":"login_failure","ip":"10.30.0.30"},{"id":"E004","kind":"login_failure","ip":"10.30.0.30"},{"id":"E005","kind":"login_success","ip":"10.30.0.30"}]},
+  {"case_id":"C002","asset":"lab-only-health","asset_criticality":"low","change_approved":true,
+   "events":[{"id":"E006","kind":"availability_failure","ip":"10.30.0.21","status":503,"note":"lab-only planned restart"}]},
+  {"case_id":"C003","asset":"lab-only-shop","asset_criticality":"high","change_approved":true,
+   "events":[{"id":"E007","kind":"missing_path","ip":"10.30.0.22","path":"/backup.zip","status":404,"note":"lab-only approved check"}]}
+]
