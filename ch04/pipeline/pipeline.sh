@@ -9,13 +9,16 @@
 set -u
 TARGET="${1:?검사할 폴더를 지정하세요 (예: app-before)}"
 SRC="$(cd "$TARGET" && pwd)"
-declare -A RESULT
+SUMMARY=""      # 단계별 결과 (macOS 기본 Bash 3.2 에서도 돌도록 연관 배열을 쓰지 않는다)
 fail=0
 
 run_stage() {   # run_stage 이름 명령...
   local name="$1"; shift
   echo "==== [$name]"
-  if "$@"; then RESULT[$name]="통과"; else RESULT[$name]="실패"; fail=1; fi
+  local result="통과"
+  if ! "$@"; then result="실패"; fail=1; fi
+  SUMMARY="$SUMMARY$(printf '  %-10s %s' "$name" "$result")
+"
   echo
 }
 
@@ -29,8 +32,6 @@ run_stage "의존성 검사" docker run --rm -v "$SRC:/src:ro" -v secbook-trivy-
   aquasec/trivy:0.75.0 fs --quiet --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 /src
 
 echo "==== 결과 요약 ($TARGET)"
-for name in "Secret 검사" "코드 검사" "의존성 검사"; do
-  printf '  %-10s %s\n' "$name" "${RESULT[$name]}"
-done
+printf '%s' "$SUMMARY"
 if [ $fail -ne 0 ]; then echo "파이프라인 실패 — 배포를 막습니다"; else echo "파이프라인 통과"; fi
 exit $fail
