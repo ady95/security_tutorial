@@ -1,0 +1,53 @@
+name: secbook-ch07
+services:
+  weak:
+    build: .
+    image: secbook/ch07-prompt-leak:lab
+    environment:
+      LAB_MODE: weak
+    networks:
+      lab:
+        ipv4_address: 10.30.0.10
+  fixed:
+    image: secbook/ch07-prompt-leak:lab
+    environment:
+      LAB_MODE: fixed
+    networks:
+      lab:
+        ipv4_address: 10.30.0.11
+  relay:
+    image: secbook/ch07-prompt-leak:lab
+    command: [python, relay.py]
+    env_file:
+      - path: ../../.env
+        required: false
+    environment:
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-http://ollama:11434/v1}
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    networks: [lab, front]
+  gateway:
+    image: nginx:1.28-alpine
+    depends_on: [weak, fixed]
+    ports: ["127.0.0.1:18071:8081", "127.0.0.1:18072:8082"]
+    volumes: ["./gateway.conf:/etc/nginx/conf.d/default.conf:ro"]
+    networks: [lab, front]
+  client:
+    image: nicolaka/netshoot:v0.16
+    command: [sleep, infinity]
+    networks:
+      lab:
+        ipv4_address: 10.30.0.20
+  ollama:
+    image: ollama/ollama:0.35.0
+    profiles: [local-model]
+    volumes: [models:/root/.ollama]
+    networks: [lab, front]
+networks:
+  lab:
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.30.0.0/24
+  front: {}
+volumes:
+  models: {}
