@@ -225,18 +225,24 @@ def main():
             cases = load(HERE / 'cases.fixture.json')
             payload = {'cases': cases, 'untrusted_intel': (HERE / 'intel.fixture.md').read_text(encoding='utf-8')}
             checker = lambda data: check_hunt(data, cases)
+        # 결과 파일 이름: review는 대상 파일(weak·fixed)별로, verify는 -verify를 붙여 모델 결과를 덮어쓰지 않는다
+        name = f'review-{args.source.stem}' if args.task == 'review' else args.task
+        if args.command == 'verify':
+            name += '-verify'
+        runs = HERE / 'runs'
+        for suffix in ('raw.txt', 'proposal.json', 'checked.json'):   # 실패해도 이전 실행의 결과가 남지 않게 먼저 지운다
+            (runs / f'{name}-{suffix}').unlink(missing_ok=True)
         if args.command == 'ask':
             raw = complete(SYSTEM + '출력 형식: ' + CONTRACTS[args.task], json.dumps(payload, ensure_ascii=False), output_schema(args.task))
-            raw_path = HERE / f'runs/{args.task}-raw.txt'
-            raw_path.parent.mkdir(exist_ok=True)
-            raw_path.write_text(raw, encoding='utf-8')
+            runs.mkdir(exist_ok=True)
+            (runs / f'{name}-raw.txt').write_text(raw, encoding='utf-8')
             data = json.loads(raw)
         else:
             data = load(args.result)
         checked = checker(data)
         if args.command == 'ask':
-            dump(HERE / f'runs/{args.task}-proposal.json', data)
-        dump(HERE / f'runs/{args.task}-checked.json', checked)
+            dump(runs / f'{name}-proposal.json', data)
+        dump(runs / f'{name}-checked.json', checked)
         print(json.dumps(checked, ensure_ascii=False, indent=2))
 
 if __name__ == '__main__':
