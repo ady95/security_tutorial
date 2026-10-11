@@ -1,4 +1,4 @@
-name: secbook-ch03
+name: secbook-ch03-proxy
 services:
   juice:
     image: bkimminich/juice-shop:v20.2.0
