@@ -24,9 +24,24 @@ def load(path: Path) -> dict[str, list[dict]]:
     return traces
 
 
+def outcome(e: dict) -> str:
+    """도구 호출의 결과를 나눈다: 실행 · 실패 · 거부 · 승인 대기 · 미확인.
+
+    실행을 요청한 것과 실행이 성공해 효과가 생긴 것은 다르다. 결과가 비어 있거나 "오류:"로 시작하면
+    실행으로 세지 않는다. 효과가 실제로 생겼는지는 결과 폴더·발송 보관함 같은 바깥 증거로 따로 확인한다.
+    """
+    result = str(e.get("result", "")).strip()
+    if not result:
+        return "미확인"
+    for prefix in ("거부", "승인 대기", "오류"):
+        if result.startswith(prefix):
+            return "실패" if prefix == "오류" else prefix
+    return "실행"
+
+
 def executed(e: dict) -> bool:
-    """가드를 통과해 실제로 실행되었는가 (거부·승인 대기는 실행되지 않은 것)."""
-    return not str(e.get("result", "")).startswith(("거부", "승인 대기"))
+    """가드를 통과해 오류 없이 실행되었는가."""
+    return outcome(e) == "실행"
 
 
 def external(e: dict) -> bool:
@@ -73,11 +88,12 @@ def main(path: Path):
         guard = "OFF" if any(e.get("reason") == "정책 꺼짐" for e in steps) else "ON"
         print(f"=== {tid} · 가드 {guard} · 목표: {goal}")
         for e, rules in tagged:
-            outcome = "실행" if executed(e) else str(e["result"]).split(":")[0][:12]
+            result = outcome(e)
+            label = str(e["result"])[:12] if result == "승인 대기" else result   # 승인 대기는 요청 번호까지
             args = json.dumps(e["args"], ensure_ascii=False)[:48]
-            print(f"  [{e['step']}] {e['tool']}({args}) tainted={str(e['tainted']).lower()} → {e['decision']} · {outcome}")
+            print(f"  [{e['step']}] {e['tool']}({args}) tainted={str(e['tainted']).lower()} → {e['decision']} · {label}")
             for r in rules:
-                hits[(r["id"], r["name"], guard, outcome == "실행")] += 1
+                hits[(r["id"], r["name"], guard, result == "실행")] += 1
                 print(f"      {r['id']} {r['name']}: {', '.join(r['asi'] + r['atlas'])}")
         final = next((e["reason"] for e in steps if e["decision"] == "final"), None)
         print(f"  [보고] {final[:70] if final else '(보고 없이 끝남)'}")
