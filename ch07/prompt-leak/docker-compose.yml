@@ -41,7 +41,7 @@ services:
     image: ollama/ollama:0.35.0
     profiles: [local-model]
     volumes: [models:/root/.ollama]
-    networks: [lab, front]
+    networks: [front]              # 앱(weak·fixed)이 있는 lab에는 두지 않는다. relay만 front로 닿는다
 networks:
   lab:
     internal: true
