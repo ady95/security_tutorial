@@ -30,9 +30,11 @@ python ch00/check_env.py      # 실습 환경 점검
 |---|---|---|
 | ch00 | 00. 들어가며 | 실습 환경 점검, 최소 랩 |
 | ch02 | 02. 네트워크와 시스템 해킹 따라하기 | packet: HTTP·HTTPS 패킷 관찰 / logs: 공격 전후 로그 비교, 속도 제한 / linux: 잘못 설정된 서버 점검 / hardening: 강화 이미지 재검증 |
-| ch03 | 03. 웹 해킹 따라하기 | shop: 실습용 쇼핑몰 앱 (기준 버전) |
-| ch04 | 04. Cloud·Container·Supply Chain 보안 따라하기 | secrets: Git 이력의 Secret 탐지, 커밋 전 검사 / deps: 의존성·이미지 취약점 검사, SBOM / pipeline: 보안 파이프라인(gitleaks·Semgrep·Trivy), GitHub Actions 예시 |
+| ch03 | 03. 웹 해킹 따라하기 | shop: 실습용 쇼핑몰 앱 (기준 버전) / proxy: Burp·Juice Shop 요청 관찰 / web: SQL Injection·XSS·IDOR의 취약·수정 앱과 요청 처리 테스트 |
+| ch04 | 04. Cloud·Container·Supply Chain 보안 따라하기 | isolation: Docker 격리·쓰기 권한 비교와 inspect 설정 검사 / secrets: Git 이력의 Secret 탐지, 커밋 전 검사 / deps: 의존성·이미지 취약점 검사, SBOM / pipeline: 보안 파이프라인(gitleaks·Semgrep·Trivy), GitHub Actions 예시 |
+| ch05 | 05. AI가 보안 도구가 되다 | analyst: 가상 로그 전처리·LLM 리뷰와 SAST 비교·이벤트 우선순위와 근거 검사 |
 | ch06 | 06. 이제 AI 자체가 공격 대상이다 | adversarial: 손글씨 숫자 분류 모델에 FGSM·PGD 공격, 적대적 학습, 재검증 (scikit-learn, GPU 불필요) |
+| ch07 | 07. LLM 해킹과 방어 따라하기 | prompt-leak: 가짜 시스템 표식 유출과 컨텍스트 제거·출력 검사 비교 |
 | ch08 | 08. RAG 해킹 따라하기 | rag: 작은 RAG 만들기 (임베딩 색인, 검색, 답변 생성) / rag-leak: 권한 없는 색인의 정보 유출, 비밀값 검사·역할별 검색 제한 / secure-rag: 수집 검증·역할별 검색 제한·출력 점검·평가 |
 | ch09 | 09. AI Agent 해킹 따라하기 | agent: 도구 4개를 가진 Tool Calling 로컬 Agent, 단계별 기록 / analyze: 12장 Agent 감사 기록을 OWASP Agentic Top 10·MITRE ATLAS 후보로 표시하는 분석 도구 |
 | ch10 | 10. 안전한 AI Agent 만들기 | sandbox: Agent 도구 실행용 Sandbox 컨테이너 설정과 제한 확인 / policy: 도구 호출 정책 엔진 |
