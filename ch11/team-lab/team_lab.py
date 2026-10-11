@@ -22,7 +22,7 @@ def check_model(model):
         assert threat["flow"] in flows, "unknown flow"
         for field in ("asset", "assumption", "impact", "control", "owner", "test"):
             assert isinstance(threat[field], str) and threat[field].strip(), field
-    return {"nodes": len(nodes), "flows": len(flows), "threats": len(model["threats"]),
+    return {"nodes": len(nodes), "boundaries": len(model.get("boundaries", [])), "flows": len(flows), "threats": len(model["threats"]),
             "meaning_reviewed": False}
 
 
