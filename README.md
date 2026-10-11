@@ -2,6 +2,8 @@
 
 위키독스 책 《AI 시대의 IT 보안 따라하기 — 해킹의 기초부터 LLM·AI 에이전트 보안까지》의 예제 코드 저장소입니다.
 
+<a href="https://wikidocs.net/book/21504"><img src="assets/book-cover.png" alt="AI 시대의 IT 보안 따라하기 책 표지" width="240"></a>
+
 - 책: [https://wikidocs.net/book/21504](https://wikidocs.net/book/21504)
 
 ## 주의
