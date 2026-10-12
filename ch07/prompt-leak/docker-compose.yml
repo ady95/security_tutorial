@@ -1,4 +1,4 @@
-name: secbook-ch07
+name: secbook-ch07-prompt-leak
 services:
   weak:
     build: .
