@@ -2,9 +2,10 @@
 
     python agent.py "목표 문장"
 
-환경변수로 보호 기능을 켜고 끈다 (12-1 에서는 끄고, 12-5 이후 하나씩 켠다)
+환경변수로 끄고 켤 수 있는 것은 정책과 승인 두 가지다 (12-1 에서는 둘 다 끈다)
     GUARD_POLICY=on|off      정책 판단 (기본 on)
     GUARD_APPROVAL=on|off    승인 대기 (기본 on)
+감사 기록과 Sandbox(Compose 설정)는 끌 수 없다. 꺼 둔 상태에서도 무엇이 일어났는지 남기기 위해서다.
 """
 import json
 import os
