@@ -4,7 +4,11 @@
 
 <a href="https://wikidocs.net/book/21504"><img src="assets/book-cover-v3.png" alt="AI 시대의 IT 보안 따라하기 책 표지" width="240"></a>
 
-- 책: [https://wikidocs.net/book/21504](https://wikidocs.net/book/21504)
+## 책 구매
+
+- YES24: [https://www.yes24.com/product/goods/198064649](https://www.yes24.com/product/goods/198064649)
+- 교보문고: [https://ebook-product.kyobobook.co.kr/dig/epd/ebook/E000013692165](https://ebook-product.kyobobook.co.kr/dig/epd/ebook/E000013692165)
+- 위키독스: [https://wikidocs.net/book/21504](https://wikidocs.net/book/21504)
 
 ## 주의
 
